@@ -1,12 +1,12 @@
 <template>
   <div class="todo-app">
     <div class="create-group-section">
-      <h2 class="section-title">Create Todo Category</h2>
+      <h2 class="section-title">Create a new project</h2>
       <div class="input-group">
         <input
           v-model="newGroupTitle"
           type="text"
-          placeholder="Enter category title"
+          placeholder="Enter project name"
           class="w-full"
           @keyup.enter="addGroup"
         />
