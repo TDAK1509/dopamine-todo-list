@@ -1,1 +1,4 @@
+User-agent: *
+Allow: /
 
+Sitemap: https://dopamine-todo-list.web.app/sitemap.xml

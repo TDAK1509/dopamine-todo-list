@@ -111,7 +111,12 @@ watch(
   todoGroups,
   async newTodos => {
     if (user.value?.uid) {
-      await saveTodos(user.value.uid, newTodos);
+      try {
+        await saveTodos(user.value.uid, newTodos);
+      } catch (error) {
+        console.error("Error saving todos:", error);
+        // Could add a notification here for failed sync
+      }
     }
   },
   { deep: true }
@@ -316,13 +321,27 @@ async function loadUserTodos(userId) {
   }
 }
 
-// Save todos to Firestore
+// Save todos to Firestore with optimistic UI
 async function saveTodos(userId, groups) {
+  // Create a copy of the data to send to firestore
+  const groupsToSave = JSON.parse(JSON.stringify(groups));
+
   try {
+    // Remove any temporary UI-only properties
+    groupsToSave.forEach(group => {
+      if (group.todos) {
+        group.todos.forEach(_todo => {
+          // Clean any temporary properties that shouldn't be stored
+          // (none needed right now but could be added later)
+        });
+      }
+    });
+
     const userDocRef = doc($firestore, "todos", userId);
-    await setDoc(userDocRef, { groups }, { merge: true });
+    await setDoc(userDocRef, { groups: groupsToSave }, { merge: true });
   } catch (error) {
     console.error("Error saving todos:", error);
+    throw error; // Re-throw to handle in the watch
   }
 }
 
