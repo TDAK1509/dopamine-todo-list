@@ -31,6 +31,9 @@ export default defineNuxtConfig({
     },
   },
   nitro: {
-    preset: "firebase",
+    preset: "static",
+    output: {
+      dir: "dist",
+    },
   },
 });

@@ -10,7 +10,7 @@
     "postinstall": "nuxt prepare",
     "firebase:init": "firebase init",
     "firebase:deploy": "firebase deploy",
-    "deploy": "nuxt build && firebase deploy"
+    "deploy": "nuxt generate && firebase deploy"
   },
   "dependencies": {
     "@nuxt/eslint": "1.3.0",
