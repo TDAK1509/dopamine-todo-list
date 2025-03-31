@@ -70,15 +70,17 @@
 
 <script setup>
 import { ref, watch } from "vue";
-import { getFirestore, doc, setDoc, onSnapshot } from "firebase/firestore";
+import { doc, setDoc, onSnapshot } from "firebase/firestore";
 import { useAuth } from "~/composables/useAuth";
 import { useNuxtApp } from "nuxt/app";
+
+// Get Firestore from plugin
+const { $firestore } = useNuxtApp();
 
 // Todo groups with title and todos
 const todoGroups = ref([]);
 const newGroupTitle = ref("");
 const newTodos = ref({});
-const firestore = getFirestore();
 
 // Get authentication state
 const { user } = useAuth();
@@ -109,7 +111,7 @@ watch(
 async function loadUserTodos(userId) {
   try {
     // Set up real-time listener for todo changes
-    const userDocRef = doc(firestore, "todos", userId);
+    const userDocRef = doc($firestore, "todos", userId);
     onSnapshot(userDocRef, snapshot => {
       if (snapshot.exists()) {
         const data = snapshot.data();
@@ -132,7 +134,7 @@ async function loadUserTodos(userId) {
 // Save todos to Firestore
 async function saveTodos(userId, groups) {
   try {
-    const userDocRef = doc(firestore, "todos", userId);
+    const userDocRef = doc($firestore, "todos", userId);
     await setDoc(userDocRef, { groups }, { merge: true });
   } catch (error) {
     console.error("Error saving todos:", error);
@@ -161,6 +163,7 @@ function addTodo(groupIndex) {
   const todoText = newTodos.value[groupIndex]?.trim();
   if (todoText) {
     todoGroups.value[groupIndex].todos.push({
+      id: Date.now(), // Unique ID for draggable
       text: todoText,
       completed: false,
     });

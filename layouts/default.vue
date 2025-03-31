@@ -17,6 +17,8 @@
 </template>
 
 <script setup>
+import { useAuth } from "~/composables/useAuth";
+
 const { isAuthenticated } = useAuth();
 </script>
 
