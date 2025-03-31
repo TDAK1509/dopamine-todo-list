@@ -55,21 +55,18 @@
           @dragend="onDragEnd"
         >
           <div class="todo-content">
-            <span class="drag-handle">☰</span>
             <input
               type="checkbox"
               :checked="todo.completed"
               @change="toggleTodo(groupIndex, todoIndex)"
+              class="todo-radio"
             />
-            <span :class="{ 'line-through': todo.completed }">
+            <span :class="{ 'completed-todo': todo.completed }">
               {{ todo.text }}
             </span>
           </div>
-          <button
-            @click="removeTodo(groupIndex, todoIndex)"
-            class="text-danger"
-          >
-            Delete
+          <button @click="removeTodo(groupIndex, todoIndex)" class="delete-btn">
+            ×
           </button>
         </li>
       </ul>
@@ -426,100 +423,77 @@ function removeTodo(groupIndex, todoIndex) {
 
 .todo-list {
   list-style: none;
+  padding: 0;
   min-height: 50px;
-  padding: 0.5rem;
-  border: 1px dashed transparent;
-  border-radius: 0.25rem;
-  transition: background-color 0.2s, border-color 0.2s;
   position: relative;
-}
-
-.todo-list.drop-target {
-  border-color: var(--primary-color);
-  background-color: rgba(59, 130, 246, 0.05);
-}
-
-.todo-list:empty {
-  border-color: #e5e7eb;
-}
-
-.drop-indicator {
-  height: 4px;
-  background-color: var(--primary-color);
-  margin: 6px 0;
-  border-radius: 2px;
-  position: relative;
-  box-shadow: 0 0 5px rgba(59, 130, 246, 0.5);
-  animation: pulse 1.5s infinite;
-  z-index: 10;
-}
-
-@keyframes pulse {
-  0% {
-    opacity: 0.6;
-  }
-  50% {
-    opacity: 1;
-  }
-  100% {
-    opacity: 0.6;
-  }
-}
-
-.drop-indicator::before {
-  content: "";
-  position: absolute;
-  left: 0;
-  height: 8px;
-  width: 8px;
-  border-radius: 50%;
-  background-color: var(--primary-color);
-  top: -2px;
-}
-
-.drop-indicator::after {
-  content: "";
-  position: absolute;
-  right: 0;
-  height: 8px;
-  width: 8px;
-  border-radius: 50%;
-  background-color: var(--primary-color);
-  top: -2px;
 }
 
 .todo-item {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 0.75rem;
-  background-color: #f3f4f6;
-  border-radius: 0.25rem;
-  margin-bottom: 0.5rem;
+  padding: 0.5rem 0;
+  border-bottom: 1px solid #eee;
   cursor: move;
-  transition: opacity 0.2s, transform 0.2s, box-shadow 0.2s;
-}
-
-.todo-item:hover {
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-}
-
-.todo-item.dragging {
-  opacity: 0.5;
-  transform: scale(0.95);
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
 }
 
 .todo-content {
   display: flex;
   align-items: center;
-  gap: 0.5rem;
+  gap: 0.75rem;
+  flex: 1;
 }
 
-.drag-handle {
-  cursor: move;
+.todo-radio {
+  height: 18px;
+  width: 18px;
+  cursor: pointer;
+  appearance: none;
+  border: 2px solid #9ca3af;
+  border-radius: 50%;
+  position: relative;
+}
+
+.todo-radio:checked {
+  background-color: var(--primary-color, #3b82f6);
+  border-color: var(--primary-color, #3b82f6);
+}
+
+.todo-radio:checked::after {
+  content: "";
+  position: absolute;
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background-color: white;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+}
+
+.completed-todo {
+  text-decoration: line-through;
   color: #9ca3af;
+}
+
+.delete-btn {
+  color: #ef4444;
   font-size: 1.25rem;
-  user-select: none;
+  font-weight: bold;
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 0 0.5rem;
+}
+
+.todo-list.drop-target {
+  background-color: rgba(59, 130, 246, 0.05);
+}
+
+.drop-indicator {
+  height: 2px;
+  background-color: var(--primary-color);
+  margin: 0;
+  border-radius: 1px;
 }
 </style>
