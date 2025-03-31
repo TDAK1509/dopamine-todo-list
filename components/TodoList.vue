@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div class="todo-app">
     <div class="create-group-section">
       <h2 class="section-title">Create Todo Category</h2>
       <div class="input-group">
@@ -14,62 +14,67 @@
       </div>
     </div>
 
-    <div
-      v-for="(group, groupIndex) in todoGroups"
-      :key="groupIndex"
-      class="todo-group"
-    >
-      <div class="group-header">
-        <h2 class="group-title">{{ group.title }}</h2>
-        <button @click="removeGroup(groupIndex)" class="text-danger">
-          Remove Category
-        </button>
-      </div>
-
-      <div class="add-todo-section">
-        <div class="input-group">
-          <input
-            v-model="newTodos[groupIndex]"
-            type="text"
-            placeholder="Add a new todo"
-            class="w-full"
-            @keyup.enter="addTodo(groupIndex)"
-          />
-          <button @click="addTodo(groupIndex)" class="success-button">
-            Add
+    <div class="todo-groups-grid">
+      <div
+        v-for="(group, groupIndex) in todoGroups"
+        :key="groupIndex"
+        class="todo-group"
+      >
+        <div class="group-header">
+          <h2 class="group-title">{{ group.title }}</h2>
+          <button @click="removeGroup(groupIndex)" class="text-danger">
+            Remove Category
           </button>
         </div>
-      </div>
 
-      <ul
-        class="todo-list"
-        @dragover="onDragOver($event, groupIndex)"
-        @drop="onDrop($event, groupIndex)"
-      >
-        <li
-          v-for="(todo, todoIndex) in group.todos"
-          :key="todo.id || todoIndex"
-          class="todo-item"
-          draggable="true"
-          @dragstart="onDragStart($event, { groupIndex, todoIndex })"
-          @dragend="onDragEnd"
-        >
-          <div class="todo-content">
+        <div class="add-todo-section">
+          <div class="input-group">
             <input
-              type="checkbox"
-              :checked="todo.completed"
-              @change="toggleTodo(groupIndex, todoIndex)"
-              class="todo-radio"
+              v-model="newTodos[groupIndex]"
+              type="text"
+              placeholder="Add a new todo"
+              class="w-full"
+              @keyup.enter="addTodo(groupIndex)"
             />
-            <span :class="{ 'completed-todo': todo.completed }">
-              {{ todo.text }}
-            </span>
+            <button @click="addTodo(groupIndex)" class="success-button">
+              Add
+            </button>
           </div>
-          <button @click="removeTodo(groupIndex, todoIndex)" class="delete-btn">
-            ×
-          </button>
-        </li>
-      </ul>
+        </div>
+
+        <ul
+          class="todo-list"
+          @dragover="onDragOver($event, groupIndex)"
+          @drop="onDrop($event, groupIndex)"
+        >
+          <li
+            v-for="(todo, todoIndex) in group.todos"
+            :key="todo.id || todoIndex"
+            class="todo-item"
+            draggable="true"
+            @dragstart="onDragStart($event, { groupIndex, todoIndex })"
+            @dragend="onDragEnd"
+          >
+            <div class="todo-content">
+              <input
+                type="checkbox"
+                :checked="todo.completed"
+                @change="toggleTodo(groupIndex, todoIndex)"
+                class="todo-radio"
+              />
+              <span :class="{ 'completed-todo': todo.completed }">
+                {{ todo.text }}
+              </span>
+            </div>
+            <button
+              @click="removeTodo(groupIndex, todoIndex)"
+              class="delete-btn"
+            >
+              ×
+            </button>
+          </li>
+        </ul>
+      </div>
     </div>
   </div>
 </template>
@@ -403,22 +408,30 @@ function removeTodo(groupIndex, todoIndex) {
 
 .todo-group {
   margin-bottom: 2rem;
+  background-color: white;
+  border-radius: 8px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  padding: 1.5rem;
+  border: 1px solid #eee;
 }
 
 .group-header {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-bottom: 1rem;
+  margin-bottom: 1.25rem;
+  padding-bottom: 0.75rem;
+  border-bottom: 1px solid #eee;
 }
 
 .group-title {
   font-size: 1.5rem;
   font-weight: 700;
+  color: var(--primary-color, #3b82f6);
 }
 
 .add-todo-section {
-  margin-bottom: 1rem;
+  margin-bottom: 1.25rem;
 }
 
 .todo-list {
@@ -426,6 +439,21 @@ function removeTodo(groupIndex, todoIndex) {
   padding: 0;
   min-height: 50px;
   position: relative;
+}
+
+.todo-list:empty {
+  height: 100px;
+  border: 1px dashed #e5e7eb;
+  border-radius: 6px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.todo-list:empty::after {
+  content: "No tasks yet";
+  color: #9ca3af;
+  font-style: italic;
 }
 
 .todo-item {
@@ -495,5 +523,23 @@ function removeTodo(groupIndex, todoIndex) {
   background-color: var(--primary-color);
   margin: 0;
   border-radius: 1px;
+}
+
+.todo-app {
+  padding: 1rem;
+  background-color: #f9fafb;
+  min-height: 100%;
+}
+
+.todo-groups-grid {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+@media (max-width: 640px) {
+  .todo-groups-grid {
+    grid-template-columns: 1fr;
+  }
 }
 </style>
