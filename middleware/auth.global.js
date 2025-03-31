@@ -1,24 +1,26 @@
 import { useAuth } from "~/composables/useAuth";
 
-export default defineNuxtRouteMiddleware(to => {
+export default defineNuxtRouteMiddleware(async to => {
   // Skip middleware on server
   if (import.meta.server) return;
 
-  const { isAuthenticated, isLoading } = useAuth();
+  const { isAuthenticated, initAuth } = useAuth();
 
-  // Publicly accessible routes
-  const publicRoutes = ["/login"];
+  // Protected routes that require authentication
+  const protectedRoutes = ["/app"];
 
-  // Wait until auth is initialized
-  if (isLoading.value) return;
+  // Initialize auth if needed
+  await initAuth();
 
-  // Not authenticated and trying to access protected route
-  if (!isAuthenticated.value && !publicRoutes.includes(to.path)) {
+  // Handle direct access to a protected route when not authenticated
+  if (!isAuthenticated.value && protectedRoutes.includes(to.path)) {
+    console.log("Not authenticated, redirecting to login");
     return navigateTo("/login");
   }
 
   // Authenticated and trying to access login page
   if (isAuthenticated.value && to.path === "/login") {
+    console.log("Already authenticated, redirecting to app");
     return navigateTo("/app");
   }
 });

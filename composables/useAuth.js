@@ -10,13 +10,35 @@ export function useAuth() {
   const user = ref(null);
   const isLoading = ref(true);
   const error = ref(null);
+  const authInitialized = ref(false);
+
+  // Function to ensure auth is initialized
+  const initAuth = () => {
+    return new Promise(resolve => {
+      if (authInitialized.value) {
+        resolve(user.value);
+        return;
+      }
+
+      const unsubscribe = onAuthStateChanged($auth, currentUser => {
+        user.value = currentUser;
+        isLoading.value = false;
+        authInitialized.value = true;
+        unsubscribe();
+        resolve(currentUser);
+      });
+    });
+  };
 
   // Set up auth state listener
   onMounted(() => {
-    onAuthStateChanged($auth, currentUser => {
-      user.value = currentUser;
-      isLoading.value = false;
-    });
+    if (!authInitialized.value) {
+      onAuthStateChanged($auth, currentUser => {
+        user.value = currentUser;
+        isLoading.value = false;
+        authInitialized.value = true;
+      });
+    }
   });
 
   // Sign in with Google
@@ -59,6 +81,7 @@ export function useAuth() {
     error,
     signInWithGoogle,
     signOut,
+    initAuth,
     isAuthenticated: computed(() => !!user.value),
   };
 }
