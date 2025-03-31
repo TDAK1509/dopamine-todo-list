@@ -1,15 +1,16 @@
 <template>
   <div>
     <div class="create-group-section">
-      <h2 class="section-title">Create Todo Group</h2>
+      <h2 class="section-title">Create Todo Category</h2>
       <div class="input-group">
         <input
           v-model="newGroupTitle"
           type="text"
-          placeholder="Enter group title"
+          placeholder="Enter category title"
           class="w-full"
+          @keyup.enter="addGroup"
         />
-        <button @click="addGroup" class="primary-button">Add Group</button>
+        <button @click="addGroup" class="primary-button">Create</button>
       </div>
     </div>
 
@@ -21,7 +22,7 @@
       <div class="group-header">
         <h2 class="group-title">{{ group.title }}</h2>
         <button @click="removeGroup(groupIndex)" class="text-danger">
-          Remove Group
+          Remove Category
         </button>
       </div>
 
@@ -77,7 +78,7 @@ import { useNuxtApp } from "nuxt/app";
 // Get Firestore from plugin
 const { $firestore } = useNuxtApp();
 
-// Todo groups with title and todos
+// Todo categories with title and todos
 const todoGroups = ref([]);
 const newGroupTitle = ref("");
 const newTodos = ref({});
@@ -117,7 +118,7 @@ async function loadUserTodos(userId) {
         const data = snapshot.data();
         todoGroups.value = data.groups || [];
 
-        // Initialize newTodos ref for each group
+        // Initialize newTodos ref for each category
         todoGroups.value.forEach((_, index) => {
           newTodos.value[index] = "";
         });
@@ -141,7 +142,7 @@ async function saveTodos(userId, groups) {
   }
 }
 
-// Add a new todo group
+// Add a new category
 function addGroup() {
   if (newGroupTitle.value.trim()) {
     todoGroups.value.push({
@@ -153,12 +154,12 @@ function addGroup() {
   }
 }
 
-// Remove a todo group
+// Remove a category
 function removeGroup(groupIndex) {
   todoGroups.value.splice(groupIndex, 1);
 }
 
-// Add a new todo to a group
+// Add a new todo to a category
 function addTodo(groupIndex) {
   const todoText = newTodos.value[groupIndex]?.trim();
   if (todoText) {
@@ -177,7 +178,7 @@ function toggleTodo(groupIndex, todoIndex) {
   todo.completed = !todo.completed;
 }
 
-// Remove a todo from a group
+// Remove a todo from a category
 function removeTodo(groupIndex, todoIndex) {
   todoGroups.value[groupIndex].todos.splice(todoIndex, 1);
 }
